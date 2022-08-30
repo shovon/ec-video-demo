@@ -1,4 +1,6 @@
 from manim import *
+import math
+import numpy as np
 
 
 class CreateCircle(Scene):
@@ -156,6 +158,7 @@ class ArgMinExample(Scene):
 
         def func(x):
             return 2 * (x - 5) ** 2
+
         graph = ax.plot(func, color=MAROON)
 
         initial_point = [ax.coords_to_point(
@@ -170,3 +173,41 @@ class ArgMinExample(Scene):
         self.add(ax, labels, graph, dot)
         self.play(t.animate.set_value(x_space[minimum_index]))
         self.wait()
+
+
+class GraphExample(Scene):
+    def construct(self):
+        ax = Axes(
+            x_range=[0, 10], y_range=[-10, 10, 1], axis_config={"include_tip": False}
+        )
+        labels = ax.get_axis_labels(x_label="x", y_label="f(x)")
+
+        t = ValueTracker(0)
+
+        def func(x):
+            return np.sqrt(x ** 3 + 7)
+
+        graph = ax.plot(func, color=MAROON)
+
+        x_space = np.linspace(*ax.x_range[:2], 200)
+        minimum_index = func(x_space).argmin()
+
+        self.add(ax, labels, graph)
+        self.play(t.animate.set_value(x_space[minimum_index]))
+        self.wait()
+
+
+class EllipticCurve(Scene):
+    def construct(self):
+        ax = Axes(x_range=[-3, 3, 1], y_range=[-3, 3, 10], x_length=14, y_length=7.5, color=BLUE, x_axis_config={"numbers_to_include": range(-3, 6 + 1, 1),
+                                                                                                                 "font_size": 24, }, y_axis_config={"numbers_to_include": range(-20, 20 + 10, 10),
+                                                                                                                                                    "font_size": 24, }, tips=False)
+
+        a = ax.plot_implicit_curve(
+            lambda x, y: -y**2 + x**3 + 7, color=YELLOW)
+
+        plane = NumberPlane(
+            x_range=[-3.2, 6.2, 1], y_range=[-21, 21, 10], x_length=14, y_length=7.5, color=GRAY)
+
+        self.add(ax, a, plane)
+        self.wait(5)
